@@ -14,22 +14,40 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 
 document.body.appendChild(renderer.domElement);
 
-const geometry = new THREE.BoxGeometry();
-const material = new THREE.MeshBasicMaterial({
-  color: 0x00ff00,
-  wireframe: true,
-});
-const cube = new THREE.Mesh(geometry, material);
+const cube = new THREE.Mesh(
+  new THREE.BoxGeometry(),
+  new THREE.MeshBasicMaterial({
+    color: 0x00ff00,
+    wireframe: true,
+  })
+);
 scene.add(cube);
 
-camera.position.z = 5;
+camera.position.z = 30;
 
-const animate = () => {
+const material = new THREE.LineBasicMaterial({ color: 0x0000ff });
+const points = [
+  new THREE.Vector3(-10, 0, 0),
+  new THREE.Vector3(0, 10, 0),
+  new THREE.Vector3(10, 0, 0),
+  new THREE.Vector3(20, 10, 0),
+];
+const geometry = new THREE.BufferGeometry().setFromPoints(points);
+const line = new THREE.Line(geometry, material);
+scene.add(line);
+
+let timeLastFrameMS = 1000 / 60;
+let deltaTime = 1 / 60;
+
+const animate = (timeMS) => {
   requestAnimationFrame(animate);
 
-  cube.rotation.x += 0.005;
-  cube.rotation.y += 0.005;
+  if (timeMS) deltaTime = (timeMS - timeLastFrameMS) / 1000;
 
+  cube.rotation.x += 1 * deltaTime;
+  cube.rotation.z += 1 * deltaTime;
+
+  if (timeMS) timeLastFrameMS = timeMS;
   renderer.render(scene, camera);
 };
 
